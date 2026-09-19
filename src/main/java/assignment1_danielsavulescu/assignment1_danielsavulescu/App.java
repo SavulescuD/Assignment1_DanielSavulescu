@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Application;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,9 +29,16 @@ public class App extends Application {
     public void start(Stage stage) {
         var root = new BorderPane();
         root.setCenter(keyboardGrid);
-        
+        keyboardGrid.setAlignment(Pos.CENTER);
+        keyboardGrid.setHgap(4);
+        keyboardGrid.setVgap(4);
+        keyboardGrid.setPadding(new Insets(80, 10, 10, 10));
+        keyboardGrid.setScaleX(4);
+        keyboardGrid.setScaleY(4);
+       
         //Adding the digits row
         addKey("1", KeyCode.DIGIT1, 0, 0);
+        GridPane.setHalignment(keyMap.get(KeyCode.DIGIT1).getButton(), HPos.RIGHT);
         addKey("2", KeyCode.DIGIT2, 1, 0);
         addKey("3", KeyCode.DIGIT3, 2, 0);
         addKey("4", KeyCode.DIGIT4, 3, 0);
@@ -41,6 +51,7 @@ public class App extends Application {
         
         //Adding the first row of letters
         addKey("Q", KeyCode.Q, 0, 1);
+        GridPane.setHalignment(keyMap.get(KeyCode.Q).getButton(), HPos.RIGHT);
         addKey("W", KeyCode.W, 1, 1);
         addKey("E", KeyCode.E, 2, 1);
         addKey("R", KeyCode.R, 3, 1);
@@ -53,6 +64,7 @@ public class App extends Application {
         
         //Adding the second row of letters
         addKey("A", KeyCode.A, 0, 2);
+        GridPane.setHalignment(keyMap.get(KeyCode.A).getButton(), HPos.RIGHT);
         addKey("S", KeyCode.S, 1, 2);
         addKey("D", KeyCode.D, 2, 2);
         addKey("F", KeyCode.F, 3, 2);
@@ -74,8 +86,9 @@ public class App extends Application {
         addKey(",", KeyCode.COMMA, 8, 3);
         addKey(".", KeyCode.PERIOD, 9, 3);
         
-        Scene scene = new Scene(root, 400, 800);
+        Scene scene = new Scene(root, 1920, 1080);
         stage.setScene(scene);
+        
         stage.setTitle("KeyBoard");
         stage.show();
     }
@@ -89,5 +102,6 @@ public class App extends Application {
         Key key = new Key(button, keyCode);
         keyMap.put(keyCode, key);
         keyboardGrid.add(button, col, row);
+        GridPane.setHalignment(button, HPos.CENTER);
     }
 }
