@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -37,24 +38,36 @@ public class App extends Application {
     public void start(Stage stage) {
         var root = new BorderPane();
         root.setCenter(keyboardGrid);
+
         var vbox = new VBox(10, toTypeTextField, typedTextField);
-        root.setTop(vbox);
+        vbox.setFillWidth(false);
         vbox.setAlignment(Pos.CENTER);
+        root.setTop(vbox);
+        toTypeTextField.setPrefWidth(600);
+        toTypeTextField.setPrefHeight(35);
+        typedTextField.setPrefWidth(600);
+        typedTextField.setPrefHeight(35);
+        toTypeTextField.setEditable(false);
+        typedTextField.setEditable(false);
         toTypeTextField.setText("Test");
+
         root.setBottom(valid);
-        valid.setAlignment(Pos.CENTER);
-        valid.setScaleX(2);
-        valid.setScaleX(2);
+        BorderPane.setAlignment(valid, Pos.CENTER);
+        valid.setPrefHeight(50);
+        valid.setMinHeight(50);
+
         keyboardGrid.setAlignment(Pos.CENTER);
-        keyboardGrid.setHgap(4);
-        keyboardGrid.setVgap(4);
-        keyboardGrid.setPadding(new Insets(80, 10, 10, 10));
-        keyboardGrid.setScaleX(4);
-        keyboardGrid.setScaleY(4);
+        keyboardGrid.setHgap(6);
+        keyboardGrid.setVgap(6);
+        keyboardGrid.setPadding(new Insets(40));
+
+        for (int i = 0; i < 12; i++) {
+            ColumnConstraints col = new ColumnConstraints(60);
+            keyboardGrid.getColumnConstraints().add(col);
+        }
 
         //Adding the digits row
         addKey("1", KeyCode.DIGIT1, 0, 0);
-        GridPane.setHalignment(keyMap.get(KeyCode.DIGIT1).getButton(), HPos.RIGHT);
         addKey("2", KeyCode.DIGIT2, 1, 0);
         addKey("3", KeyCode.DIGIT3, 2, 0);
         addKey("4", KeyCode.DIGIT4, 3, 0);
@@ -68,7 +81,6 @@ public class App extends Application {
 
         //Adding the first row of letters
         addKey("Q", KeyCode.Q, 0, 1);
-        GridPane.setHalignment(keyMap.get(KeyCode.Q).getButton(), HPos.RIGHT);
         addKey("W", KeyCode.W, 1, 1);
         addKey("E", KeyCode.E, 2, 1);
         addKey("R", KeyCode.R, 3, 1);
@@ -81,7 +93,6 @@ public class App extends Application {
 
         //Adding the second row of letters
         addKey("A", KeyCode.A, 0, 2);
-        GridPane.setHalignment(keyMap.get(KeyCode.A).getButton(), HPos.RIGHT);
         addKey("S", KeyCode.S, 1, 2);
         addKey("D", KeyCode.D, 2, 2);
         addKey("F", KeyCode.F, 3, 2);
@@ -90,6 +101,8 @@ public class App extends Application {
         addKey("J", KeyCode.J, 6, 2);
         addKey("K", KeyCode.K, 7, 2);
         addKey("L", KeyCode.L, 8, 2);
+        addKey(";", KeyCode.SEMICOLON, 9, 2);
+        addKey("'", KeyCode.QUOTE, 10, 2);
 
         //Adding the third row of letters
         addKey("SHIFT", KeyCode.SHIFT, 0, 3);
@@ -102,8 +115,24 @@ public class App extends Application {
         addKey("M", KeyCode.M, 7, 3);
         addKey(",", KeyCode.COMMA, 8, 3);
         addKey(".", KeyCode.PERIOD, 9, 3);
-        
-        Scene scene = new Scene(root, 1920, 1080);
+
+        //Adding the space bar
+        Button spaceButton = new Button("━━━━━");
+        spaceButton.setPrefHeight(50);
+        spaceButton.setPrefWidth(400);
+        spaceButton.setStyle("-fx-background-color: #DE8A52;"
+                + "-fx-border-color: #DE5260;"
+                + "-fx-border-radius: 8;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-width: 2"
+        );
+        Key spaceKey = new Key(spaceButton, KeyCode.SPACE);
+        keyMap.put(KeyCode.SPACE, spaceKey);
+        keyboardGrid.add(spaceButton, 3, 4);
+        GridPane.setColumnSpan(spaceButton, 5);
+        GridPane.setHalignment(spaceButton, HPos.CENTER);
+
+        Scene scene = new Scene(root, 1100, 700);
         stage.setScene(scene);
 
         scene.setOnKeyPressed(event -> keyPressed(event));
@@ -111,6 +140,7 @@ public class App extends Application {
 
         stage.setTitle("KeyBoard");
         stage.show();
+        root.requestFocus();
     }
 
     public static void main(String[] args) {
@@ -127,6 +157,8 @@ public class App extends Application {
      */
     public void addKey(String label, KeyCode keyCode, int col, int row) {
         Button button = new Button(label);
+        button.setPrefHeight(50);
+        button.setMaxWidth(Double.MAX_VALUE);
         button.setStyle(
                 "-fx-background-color: #DE8A52;"
                 + "-fx-border-color: #DE5260;"
@@ -134,7 +166,7 @@ public class App extends Application {
                 + "-fx-background-radius: 8;"
                 + "-fx-border-width: 2"
         );
-        
+
         Key key = new Key(button, keyCode);
         keyMap.put(keyCode, key);
         keyboardGrid.add(button, col, row);
@@ -152,23 +184,25 @@ public class App extends Application {
 
         if (key != null) {
             key.buttonPressed(true);
+            valid.setText("");
+
+            if (keyCode == KeyCode.BACK_SPACE) {
+                if (sb.length() > 0) {
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+            } else {
+                String typed = event.getText();
+                if (typed != null && !typed.isEmpty()) {
+                    sb.append(typed);
+                }
+            }
+
+            typedTextField.setText(sb.toString());
         } else {
             valid.setText("Not Handled");
+            valid.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
             valid.setTextFill(Color.RED);
         }
-        
-        if (keyCode == KeyCode.BACK_SPACE) {
-            if (sb.length() > 0) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-        } else {
-            String typed = event.getText();
-            if (typed != null && !typed.isEmpty()) {
-                sb.append(typed);
-            }
-        }
-        
-        typedTextField.setText(sb.toString());
     }
 
     /**
