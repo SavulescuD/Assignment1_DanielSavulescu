@@ -11,11 +11,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -25,11 +28,23 @@ public class App extends Application {
 
     private Map<KeyCode, Key> keyMap = new HashMap<>();
     private GridPane keyboardGrid = new GridPane();
+    private TextField toTypeTextField = new TextField();
+    private TextField typedTextField = new TextField();
+    private StringBuilder sb = new StringBuilder();
+    private Label valid = new Label();
 
     @Override
     public void start(Stage stage) {
         var root = new BorderPane();
         root.setCenter(keyboardGrid);
+        var vbox = new VBox(10, toTypeTextField, typedTextField);
+        root.setTop(vbox);
+        vbox.setAlignment(Pos.CENTER);
+        toTypeTextField.setText("Test");
+        root.setBottom(valid);
+        valid.setAlignment(Pos.CENTER);
+        valid.setScaleX(2);
+        valid.setScaleX(2);
         keyboardGrid.setAlignment(Pos.CENTER);
         keyboardGrid.setHgap(4);
         keyboardGrid.setVgap(4);
@@ -49,6 +64,7 @@ public class App extends Application {
         addKey("8", KeyCode.DIGIT8, 7, 0);
         addKey("9", KeyCode.DIGIT9, 8, 0);
         addKey("0", KeyCode.DIGIT0, 9, 0);
+        addKey("←", KeyCode.BACK_SPACE, 10, 0);
 
         //Adding the first row of letters
         addKey("Q", KeyCode.Q, 0, 1);
@@ -86,7 +102,7 @@ public class App extends Application {
         addKey("M", KeyCode.M, 7, 3);
         addKey(",", KeyCode.COMMA, 8, 3);
         addKey(".", KeyCode.PERIOD, 9, 3);
-
+        
         Scene scene = new Scene(root, 1920, 1080);
         stage.setScene(scene);
 
@@ -136,7 +152,23 @@ public class App extends Application {
 
         if (key != null) {
             key.buttonPressed(true);
+        } else {
+            valid.setText("Not Handled");
+            valid.setTextFill(Color.RED);
         }
+        
+        if (keyCode == KeyCode.BACK_SPACE) {
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+        } else {
+            String typed = event.getText();
+            if (typed != null && !typed.isEmpty()) {
+                sb.append(typed);
+            }
+        }
+        
+        typedTextField.setText(sb.toString());
     }
 
     /**
@@ -150,6 +182,9 @@ public class App extends Application {
 
         if (key != null) {
             key.buttonPressed(false);
+        } else {
+            valid.setText("");
+            valid.setTextFill(Color.BLACK);
         }
     }
 }
