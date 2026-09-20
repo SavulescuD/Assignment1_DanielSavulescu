@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -29,27 +30,27 @@ public class App extends Application {
 
     private Map<KeyCode, Key> keyMap = new HashMap<>();
     private GridPane keyboardGrid = new GridPane();
-    private TextField toTypeTextField = new TextField();
+    private Label toTypeTextLabel = new Label();
     private TextField typedTextField = new TextField();
     private StringBuilder sb = new StringBuilder();
     private Label valid = new Label();
+    private Map<Integer, String> sampleTextMap = new TreeMap<>();
+    private int sampleTextNum = 1;
 
     @Override
     public void start(Stage stage) {
         var root = new BorderPane();
         root.setCenter(keyboardGrid);
 
-        var vbox = new VBox(10, toTypeTextField, typedTextField);
+        var vbox = new VBox(10, toTypeTextLabel, typedTextField);
         vbox.setFillWidth(false);
         vbox.setAlignment(Pos.CENTER);
         root.setTop(vbox);
-        toTypeTextField.setPrefWidth(600);
-        toTypeTextField.setPrefHeight(35);
+        toTypeTextLabel.setPrefWidth(600);
+        toTypeTextLabel.setPrefHeight(35);
         typedTextField.setPrefWidth(600);
         typedTextField.setPrefHeight(35);
-        toTypeTextField.setEditable(false);
         typedTextField.setEditable(false);
-        toTypeTextField.setText("Test");
 
         root.setBottom(valid);
         BorderPane.setAlignment(valid, Pos.CENTER);
@@ -137,6 +138,39 @@ public class App extends Application {
 
         scene.setOnKeyPressed(event -> keyPressed(event));
         scene.setOnKeyReleased(event -> keyReleased(event));
+
+        String sample1 = "Try typing this text. Do it as quickly and accurately as you can.";
+        String sample2 = "Next type another line of input data.";
+        String sample3 = "The quick brown fox jumps over the lazy dog.";
+        String sample4 = "Five big quacking zephyrs jolt my wax bed.";
+        String sample5 = "Sympathizing would fix Quaker objectives";
+        String sample6 = "A large fawn jumped quickly over white zinc boxes";
+        
+        toTypeTextLabel.setText(sample1);
+
+        sampleTextMap.put(1, sample1);
+        sampleTextMap.put(2, sample2);
+        sampleTextMap.put(3, sample3);
+        sampleTextMap.put(4, sample4);
+        sampleTextMap.put(5, sample5);
+        sampleTextMap.put(6, sample6);
+
+        var nextButton = new Button("Next, 1 of 6");
+        root.setRight(nextButton);
+        BorderPane.setAlignment(nextButton, Pos.CENTER);
+
+        nextButton.setOnAction(event -> {
+            if (sampleTextNum >= 6) {
+                sampleTextNum += 0;
+            } else {
+                sampleTextNum++;
+            }
+            
+            nextButton.setText(String.format("Next, %d of 6", sampleTextNum));
+            typedTextField.clear();
+            toTypeTextLabel.setText(sampleTextMap.get(sampleTextNum));
+
+        });
 
         stage.setTitle("KeyBoard");
         stage.show();
