@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -35,7 +36,7 @@ public class App extends Application {
         keyboardGrid.setPadding(new Insets(80, 10, 10, 10));
         keyboardGrid.setScaleX(4);
         keyboardGrid.setScaleY(4);
-       
+
         //Adding the digits row
         addKey("1", KeyCode.DIGIT1, 0, 0);
         GridPane.setHalignment(keyMap.get(KeyCode.DIGIT1).getButton(), HPos.RIGHT);
@@ -48,7 +49,7 @@ public class App extends Application {
         addKey("8", KeyCode.DIGIT8, 7, 0);
         addKey("9", KeyCode.DIGIT9, 8, 0);
         addKey("0", KeyCode.DIGIT0, 9, 0);
-        
+
         //Adding the first row of letters
         addKey("Q", KeyCode.Q, 0, 1);
         GridPane.setHalignment(keyMap.get(KeyCode.Q).getButton(), HPos.RIGHT);
@@ -61,7 +62,7 @@ public class App extends Application {
         addKey("I", KeyCode.I, 7, 1);
         addKey("O", KeyCode.O, 8, 1);
         addKey("P", KeyCode.P, 9, 1);
-        
+
         //Adding the second row of letters
         addKey("A", KeyCode.A, 0, 2);
         GridPane.setHalignment(keyMap.get(KeyCode.A).getButton(), HPos.RIGHT);
@@ -73,7 +74,7 @@ public class App extends Application {
         addKey("J", KeyCode.J, 6, 2);
         addKey("K", KeyCode.K, 7, 2);
         addKey("L", KeyCode.L, 8, 2);
-        
+
         //Adding the third row of letters
         addKey("SHIFT", KeyCode.SHIFT, 0, 3);
         addKey("Z", KeyCode.Z, 1, 3);
@@ -85,10 +86,13 @@ public class App extends Application {
         addKey("M", KeyCode.M, 7, 3);
         addKey(",", KeyCode.COMMA, 8, 3);
         addKey(".", KeyCode.PERIOD, 9, 3);
-        
+
         Scene scene = new Scene(root, 1920, 1080);
         stage.setScene(scene);
-        
+
+        scene.setOnKeyPressed(event -> keyPressed(event));
+        scene.setOnKeyReleased(event -> keyReleased(event));
+
         stage.setTitle("KeyBoard");
         stage.show();
     }
@@ -97,11 +101,55 @@ public class App extends Application {
         launch();
     }
 
+    /**
+     * adds a key to the map and the button for grid pane for the keyboard
+     *
+     * @param label the label of the button
+     * @param keyCode the key code of the button
+     * @param col the colon of the button
+     * @param row
+     */
     public void addKey(String label, KeyCode keyCode, int col, int row) {
         Button button = new Button(label);
+        button.setStyle(
+                "-fx-background-color: #DE8A52;"
+                + "-fx-border-color: #DE5260;"
+                + "-fx-border-radius: 8;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-width: 2"
+        );
+        
         Key key = new Key(button, keyCode);
         keyMap.put(keyCode, key);
         keyboardGrid.add(button, col, row);
         GridPane.setHalignment(button, HPos.CENTER);
+    }
+
+    /**
+     * handles the animation when a key is pressed
+     *
+     * @param event the event when a key is pressed
+     */
+    public void keyPressed(KeyEvent event) {
+        KeyCode keyCode = event.getCode();
+        Key key = keyMap.get(keyCode);
+
+        if (key != null) {
+            key.buttonPressed(true);
+        }
+    }
+
+    /**
+     * handles the animation when a key is released
+     *
+     * @param event the event when a key is released
+     */
+    public void keyReleased(KeyEvent event) {
+        KeyCode keyCode = event.getCode();
+        Key key = keyMap.get(keyCode);
+
+        if (key != null) {
+            key.buttonPressed(false);
+        }
     }
 }
