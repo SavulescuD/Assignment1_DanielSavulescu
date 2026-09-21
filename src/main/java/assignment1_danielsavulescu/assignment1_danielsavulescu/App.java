@@ -18,12 +18,16 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
+ *
+ * @author Daniel Savulescu - 2540408
+ *
  * JavaFX App
  */
 public class App extends Application {
@@ -145,7 +149,7 @@ public class App extends Application {
         String sample4 = "Five big quacking zephyrs jolt my wax bed.";
         String sample5 = "Sympathizing would fix Quaker objectives";
         String sample6 = "A large fawn jumped quickly over white zinc boxes";
-        
+
         toTypeTextLabel.setText(sample1);
 
         sampleTextMap.put(1, sample1);
@@ -156,20 +160,30 @@ public class App extends Application {
         sampleTextMap.put(6, sample6);
 
         var nextButton = new Button("Next, 1 of 6");
-        root.setRight(nextButton);
-        BorderPane.setAlignment(nextButton, Pos.CENTER);
+        var resetButton = new Button("Reset");
+        var vboxButtons = new VBox(nextButton, resetButton);
+        root.setRight(vboxButtons);
+        BorderPane.setAlignment(vboxButtons, Pos.CENTER);
+
+        resetButton.setOnAction(event -> {
+            sampleTextNum = 1;
+            sb.setLength(0);
+            typedTextField.clear();
+            nextButton.setText("Next, 1 of 6");
+            toTypeTextLabel.setText(sampleTextMap.get(sampleTextNum));
+            root.requestFocus();
+        });
 
         nextButton.setOnAction(event -> {
-            if (sampleTextNum >= 6) {
-                sampleTextNum += 0;
-            } else {
+            if (sampleTextNum < 6) {
                 sampleTextNum++;
             }
             
+            sb.setLength(0);
             nextButton.setText(String.format("Next, %d of 6", sampleTextNum));
             typedTextField.clear();
             toTypeTextLabel.setText(sampleTextMap.get(sampleTextNum));
-
+            root.requestFocus();
         });
 
         stage.setTitle("KeyBoard");
