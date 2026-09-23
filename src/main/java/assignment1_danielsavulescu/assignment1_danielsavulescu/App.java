@@ -1,8 +1,6 @@
 package assignment1_danielsavulescu.assignment1_danielsavulescu;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javafx.application.Application;
@@ -18,8 +16,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -164,9 +160,12 @@ public class App extends Application {
         sampleTextMap.put(6, sample6);
 
         var nextButton = new Button("Next, 1 of 6");
+        nextButton.setStyle("-fx-background-color: blue;");
+        nextButton.setTextFill(Color.WHITE);
         var resetButton = new Button("Reset");
         var vboxButtons = new VBox(5, nextButton, resetButton);
         root.setRight(vboxButtons);
+        vboxButtons.setPadding(new Insets(20));
         BorderPane.setAlignment(vboxButtons, Pos.CENTER);
 
         resetButton.setOnAction(event -> {
