@@ -24,7 +24,7 @@ import javafx.stage.Stage;
  *
  * @author Daniel Savulescu - 2540408
  *
- * JavaFX App
+ * JavaFX App - typing tutor
  */
 public class App extends Application {
 
@@ -39,6 +39,7 @@ public class App extends Application {
     private int correctKeyStrokes = 0;
     private int incorrectKeyStrokes = 0;
     private Label stats = new Label("Correct Keys: 0" + "\n" +  "Incorrect Keys: 0");
+    private KeyCode lastKeyCode;
     
     @Override
     public void start(Stage stage) {
@@ -142,13 +143,14 @@ public class App extends Application {
         scene.setOnKeyPressed(event -> keyPressed(event));
         scene.setOnKeyReleased(event -> keyReleased(event));
         scene.setOnKeyTyped(event -> keyTyped(event));
-
+        
+        //Adding the sample text
         String sample1 = "Try typing this text. Do it as quickly and accurately as you can.";
         String sample2 = "Next type another line of input data.";
         String sample3 = "The quick brown fox jumps over the lazy dog.";
         String sample4 = "Five big quacking zephyrs jolt my wax bed.";
-        String sample5 = "Sympathizing would fix Quaker objectives";
-        String sample6 = "A large fawn jumped quickly over white zinc boxes";
+        String sample5 = "Sympathizing would fix Quaker objectives.";
+        String sample6 = "A large fawn jumped quickly over white zinc boxes.";
 
         toTypeTextLabel.setText(sample1);
 
@@ -242,10 +244,14 @@ public class App extends Application {
     public void keyPressed(KeyEvent event) {
         KeyCode keyCode = event.getCode();
         Key key = keyMap.get(keyCode);
+        lastKeyCode = keyCode;
 
         if (key != null) {
             key.buttonPressed(true);
-            valid.setText("");
+            
+            valid.setText(keyCode.getName());
+            valid.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
+            valid.setTextFill(Color.BLACK);
 
             if (keyCode == KeyCode.BACK_SPACE) {
                 if (sb.length() > 0) {
@@ -268,7 +274,11 @@ public class App extends Application {
     public void keyTyped(KeyEvent event) {
         String character = event.getCharacter();
         
-        if (character.equals("\b") || character.equals("\r") || character.equals("\n")) {
+        if (!keyMap.containsKey(lastKeyCode)) {
+            return;
+        }
+        
+        if (lastKeyCode == KeyCode.BACK_SPACE || lastKeyCode == KeyCode.ENTER) {
             return;
         }
         
