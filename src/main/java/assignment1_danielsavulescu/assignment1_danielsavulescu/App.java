@@ -22,6 +22,8 @@ import javafx.stage.Stage;
 
 /**
  *
+ * GitHub repository link: https://github.com/SavulescuD/Assignment1_DanielSavulescu.git
+ * 
  * @author Daniel Savulescu - 2540408
  *
  * JavaFX App - typing tutor
@@ -38,9 +40,9 @@ public class App extends Application {
     private int sampleTextNum = 1;
     private int correctKeyStrokes = 0;
     private int incorrectKeyStrokes = 0;
-    private Label stats = new Label("Correct Keys: 0" + "\n" +  "Incorrect Keys: 0");
+    private Label stats = new Label("Correct Keys: 0" + "\n" + "Incorrect Keys: 0");
     private KeyCode lastKeyCode;
-    
+
     @Override
     public void start(Stage stage) {
         var root = new BorderPane();
@@ -143,7 +145,7 @@ public class App extends Application {
         scene.setOnKeyPressed(event -> keyPressed(event));
         scene.setOnKeyReleased(event -> keyReleased(event));
         scene.setOnKeyTyped(event -> keyTyped(event));
-        
+
         //Adding the sample text
         String sample1 = "Try typing this text. Do it as quickly and accurately as you can.";
         String sample2 = "Next type another line of input data.";
@@ -175,7 +177,7 @@ public class App extends Application {
             sb.setLength(0);
             correctKeyStrokes = 0;
             incorrectKeyStrokes = 0;
-            stats.setText("Correct Keys: 0" + "\n" +  "Incorrect Keys: 0");
+            stats.setText("Correct Keys: 0" + "\n" + "Incorrect Keys: 0");
             typedTextField.clear();
             nextButton.setText("Next, 1 of 6");
             toTypeTextLabel.setText(sampleTextMap.get(sampleTextNum));
@@ -186,21 +188,20 @@ public class App extends Application {
             if (sampleTextNum < 6) {
                 sampleTextNum++;
             }
-            
+
             sb.setLength(0);
             correctKeyStrokes = 0;
             incorrectKeyStrokes = 0;
-            stats.setText("Correct Keys: 0" + "\n" +  "Incorrect Keys: 0");
+            stats.setText("Correct Keys: 0" + "\n" + "Incorrect Keys: 0");
             nextButton.setText(String.format("Next, %d of 6", sampleTextNum));
             typedTextField.clear();
             toTypeTextLabel.setText(sampleTextMap.get(sampleTextNum));
             root.requestFocus();
         });
-        
-        
+
         root.setLeft(stats);
         BorderPane.setAlignment(stats, Pos.CENTER);
-        
+
         stage.setTitle("KeyBoard");
         stage.show();
         root.requestFocus();
@@ -248,7 +249,7 @@ public class App extends Application {
 
         if (key != null) {
             key.buttonPressed(true);
-            
+
             valid.setText(keyCode.getName());
             valid.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
             valid.setTextFill(Color.BLACK);
@@ -257,31 +258,32 @@ public class App extends Application {
                 if (sb.length() > 0) {
                     sb.deleteCharAt(sb.length() - 1);
                 }
-                
+
                 typedTextField.setText(sb.toString());
-            } 
+            }
         } else {
             valid.setText("Not Handled");
             valid.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
             valid.setTextFill(Color.RED);
         }
     }
-    
+
     /**
      * handles the event when a key is typed for the text field
+     *
      * @param event the event when a key is typed
      */
     public void keyTyped(KeyEvent event) {
         String character = event.getCharacter();
-        
+
         if (!keyMap.containsKey(lastKeyCode)) {
             return;
         }
-        
+
         if (lastKeyCode == KeyCode.BACK_SPACE || lastKeyCode == KeyCode.ENTER) {
             return;
         }
-        
+
         if (!character.isEmpty()) {
             checkKeyStrokeCorrectness(character);
             sb.append(character);
@@ -305,21 +307,23 @@ public class App extends Application {
             valid.setTextFill(Color.BLACK);
         }
     }
-    
+
     /**
-     * checks whether the key stroke matches with the text above and count the correct ones and incorrect ones
+     * checks whether the key stroke matches with the text above and count the
+     * correct ones and incorrect ones
+     *
      * @param typed the typed key stroke
      */
     public void checkKeyStrokeCorrectness(String typed) {
         String targetText = toTypeTextLabel.getText();
         int position = sb.length();
-        
+
         if (position < targetText.length() && targetText.substring(position, position + 1).equals(typed)) {
             correctKeyStrokes++;
         } else {
             incorrectKeyStrokes++;
         }
-        
+
         stats.setText(String.format("Correct Keys: %d" + "\n" + "Incorrect Keys: %d", correctKeyStrokes, incorrectKeyStrokes));
     }
 }
